@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🎮 Codémon: Terminal Trials
 
 A fully terminal-based, object-oriented Pokémon battle simulator powered by real-time data from the [PokéAPI](https://pokeapi.co/). Inspired by the classic Pokémon Red/Blue battle system, this Java project brings turn-based combat, leveling, type effectiveness, and save/load mechanics to your command line.
@@ -125,3 +126,7 @@ Created by:
 - **Apolinar, Jev Austin**
 - **Arazula, Rjay**
 - **Mendoza, Ken Frankie**
+=======
+# Cod-mon-Terminal-Trials
+Choose from all 151 Gen 1 Pokémon and battle in turn-based duels using object-oriented features like encapsulation, inheritance, and polymorphism. The game runs entirely in the command line, with a clean, data-driven design that brings classic Pokémon battles to life, no graphics needed, just smart code and strategy.
+>>>>>>> 2f26dab94123ececc4032ff3cd4a1fff89e1f178
