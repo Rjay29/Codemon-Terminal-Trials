@@ -100,7 +100,7 @@ The game is built around four key OOP principles:
 ### 🔸 Start the Game
 
 ```bash
-mvn exec:java -Dexec.mainClass=Codemon.MainMenu
+mvn exec:java
 ```
 
 ### 🔸 Main Menu Options
