@@ -31,31 +31,36 @@ public class BattleGame {
     }
 
     private static void battleLoop(Scanner scanner, Species player, Species opponent) {
+        // Battle continues until one Pokémon faints or player runs
         while (player.getHp() > 0 && opponent.getHp() > 0) {
             System.out.println("\n--- Battle Menu ---");
+            System.out.println(player.getName() + " HP: " + player.getHp() + "    " + opponent.getName() + " HP: " + opponent.getHp());
             System.out.println("1. Fight");
             System.out.println("2. Run");
-            System.out.println("3. Save State");
-            System.out.println("4. Load State");
             System.out.print("Choose: ");
             int choice = scanner.nextInt();
 
-            switch (choice) {
-                case 1 -> {
-                    playerTurn(scanner, player, opponent);
-                    if (opponent.getHp() <= 0) break;
-                    opponentTurn(opponent, player);
-                }
-                case 2 -> {
-                    System.out.println("You ran away!");
-                    return;
-                }
-                case 3 -> GameState.saveNamed(scanner, player);
-                case 4 -> {
-                    Species loaded = GameState.loadNamed(scanner);
-                    if (loaded != null) player = loaded;
-                }
-                default -> System.out.println("Invalid choice.");
+            if (choice == 2) {
+                System.out.println("You ran away!");
+                return;
+            } else if (choice != 1) {
+                System.out.println("Invalid choice.");
+                continue;
+            }
+
+            // Determine turn order by level (higher level acts first); tie -> player first
+            boolean playerFirst = player.getLevel() >= opponent.getLevel();
+
+            if (playerFirst) {
+                boolean opponentFainted = playerTurn(scanner, player, opponent);
+                if (opponentFainted) break;
+                boolean playerFainted = opponentTurn(opponent, player);
+                if (playerFainted) break;
+            } else {
+                boolean playerFainted = opponentTurn(opponent, player);
+                if (playerFainted) break;
+                boolean opponentFainted = playerTurn(scanner, player, opponent);
+                if (opponentFainted) break;
             }
         }
 
@@ -72,7 +77,7 @@ public class BattleGame {
         }
     }
 
-    private static void playerTurn(Scanner scanner, Species player, Species opponent) {
+    private static boolean playerTurn(Scanner scanner, Species player, Species opponent) {
         List<Move> moves = player.getMoves();
         System.out.println("\nYour Moves:");
         for (int i = 0; i < moves.size(); i++) {
@@ -83,32 +88,59 @@ public class BattleGame {
         System.out.print("Choose a move: ");
         int choice = scanner.nextInt() - 1;
         Move move = moves.get(choice);
-
+        // Accuracy check
         if (new Random().nextInt(100) < move.getAccuracy()) {
-            double multiplier = TypeEffectiveness.getMultiplier(move.getType(), opponent.getType());
-            int damage = calculateDamage(player.getAttack(), opponent.getDefense(), move.getPower(), multiplier);
-            opponent.setHp(opponent.getHp() - damage);
-            System.out.println(player.getName() + " used " + move.getName() + "! " + effectivenessText(multiplier) + " Deals " + damage + " damage.");
+            // Critical hit (6.25% chance)
+            boolean crit = new Random().nextInt(16) == 0;
+            double critMultiplier = crit ? 1.5 : 1.0;
+
+            // STAB (same type attack bonus)
+            double stab = move.getType().equalsIgnoreCase(player.getType()) ? 1.5 : 1.0;
+
+            double typeMultiplier = TypeEffectiveness.getMultiplier(move.getType(), opponent.getType());
+
+            int damage = calculatePokemonDamage(player.getLevel(), player.getAttack(), opponent.getDefense(), move.getPower(), typeMultiplier, stab, critMultiplier);
+            opponent.setHp(Math.max(0, opponent.getHp() - damage));
+
+            System.out.print(player.getName() + " used " + move.getName() + "! ");
+            if (crit) System.out.print("A critical hit! ");
+            System.out.println(effectivenessText(typeMultiplier) + " Dealt " + damage + " damage.");
         } else {
             System.out.println(player.getName() + " missed!");
         }
+
+        return opponent.getHp() <= 0;
     }
 
-    private static void opponentTurn(Species opponent, Species player) {
+    private static boolean opponentTurn(Species opponent, Species player) {
         Move move = opponent.getMoves().get(new Random().nextInt(opponent.getMoves().size()));
         if (new Random().nextInt(100) < move.getAccuracy()) {
-            double multiplier = TypeEffectiveness.getMultiplier(move.getType(), player.getType());
-            int damage = calculateDamage(opponent.getAttack(), player.getDefense(), move.getPower(), multiplier);
-            player.setHp(player.getHp() - damage);
-            System.out.println(opponent.getName() + " used " + move.getName() + "! " + effectivenessText(multiplier) + " Deals " + damage + " damage.");
+            boolean crit = new Random().nextInt(16) == 0;
+            double critMultiplier = crit ? 1.5 : 1.0;
+            double stab = move.getType().equalsIgnoreCase(opponent.getType()) ? 1.5 : 1.0;
+            double typeMultiplier = TypeEffectiveness.getMultiplier(move.getType(), player.getType());
+
+            int damage = calculatePokemonDamage(opponent.getLevel(), opponent.getAttack(), player.getDefense(), move.getPower(), typeMultiplier, stab, critMultiplier);
+            player.setHp(Math.max(0, player.getHp() - damage));
+
+            System.out.print(opponent.getName() + " used " + move.getName() + "! ");
+            if (crit) System.out.print("A critical hit! ");
+            System.out.println(effectivenessText(typeMultiplier) + " Dealt " + damage + " damage.");
         } else {
             System.out.println(opponent.getName() + " missed!");
         }
+
+        return player.getHp() <= 0;
     }
 
-    private static int calculateDamage(int atk, int def, int power, double multiplier) {
-        int base = (atk * power / 50) - (def / 4);
-        return (int) Math.max(1, base * multiplier);
+    // New Pokemon-like damage formula that includes level, STAB, criticals and variance
+    private static int calculatePokemonDamage(int level, int atk, int def, int power, double typeMultiplier, double stab, double crit) {
+        // Classic-ish formula: (((2*L/5 + 2) * Power * A/D) / 50 + 2) * Modifiers
+        double base = (((2.0 * level) / 5.0 + 2.0) * power * ((double) atk / Math.max(1, def)) / 50.0) + 2.0;
+        // Random variance between 85% - 100%
+        double variance = 0.85 + (new Random().nextDouble() * 0.15);
+        double modifier = typeMultiplier * stab * crit * variance;
+        return (int) Math.max(1, Math.floor(base * modifier));
     }
 
     private static String effectivenessText(double multiplier) {

@@ -8,10 +8,9 @@ public class MainMenu {
         while (true) {
             System.out.println("\n--- Terminal Pokémon Battle ---");
             System.out.println("1. Battle");
-            System.out.println("2. Load Save State");
-            System.out.println("3. Pokémon List");
-            System.out.println("4. Credits");
-            System.out.println("5. End Game");
+            System.out.println("2. Pokémon List");
+            System.out.println("3. Credits");
+            System.out.println("4. End Game");
             System.out.print("Choose: ");
             
             if (!scanner.hasNextInt()) {
@@ -26,18 +25,12 @@ public class MainMenu {
                     BattleGame.startBattle(scanner);
                     break;
                 case 2:
-                    Species loaded = GameState.loadNamed(scanner);
-                    if (loaded != null) {
-                        System.out.println("Loaded " + loaded.getName() + " (Lv " + loaded.getLevel() + ")");
-                    }
-                    break;
-                case 3:
                     PKMList.showList();
                     break;
-                case 4:
+                case 3:
                     showCredits();
                     break;
-                case 5:
+                case 4:
                     System.out.println("Thanks for playing!");
                     scanner.close();
                     return;

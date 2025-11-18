@@ -30,7 +30,6 @@ The game is built around four key OOP principles:
 - **Difficulty modes**:
   - **Easy**: See opponent before choosing your Pokémon.
   - **Hard**: Choose blindly; opponent is stronger.
-- **Save/Load**: Save your Pokémon with a custom name and resume later.
 
 ---
 
@@ -45,7 +44,6 @@ The game is built around four key OOP principles:
 | `Move.java`            | Represents a move with power, accuracy, type, and damage class         |
 | `PokemonFactory.java`  | Fetches Pokémon and moves from PokéAPI                                 |
 | `TypeEffectiveness.java` | Calculates damage multipliers based on type matchups                 |
-| `GameState.java`       | Save/load Pokémon to/from named `.sav` files                           |
 | `PokemonList.java`     | Displays the first 151 Pokémon names from PokéAPI                      |
 
 ---
@@ -105,7 +103,6 @@ mvn exec:java
 ### 🔸 Main Menu Options
 
 - **Battle**: Choose difficulty and fight a random opponent
-- **Load Save State**: Load a previously saved Pokémon
 - **Pokémon List**: View the first 151 Pokémon names
 - **Credits**: View the creators
 - **End Game**: Exit the program
@@ -114,8 +111,6 @@ mvn exec:java
 
 - **Fight**: Choose a move to attack
 - **Run**: Flee the battle
-- **Save State**: Save your Pokémon with a custom name
-- **Load State**: Load a saved Pokémon mid-battle
 
 ---
 
