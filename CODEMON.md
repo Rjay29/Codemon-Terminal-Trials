@@ -813,6 +813,21 @@ mvn exec:java -Dexec.mainClass=Codemon.PokeAPI
 
 ---
 
+## Sample Output
+
+### Battle Example (concise)
+```
+[GREEN] Go! Pikachu (Lv 5)
+Pikachu HP: [##########----------]   Charizard HP: [##############------]
+Pikachu used Thunder Shock! It's super effective! Dealt 65 damage.
+*** Victory! ***
+[BLUE] Press Enter to continue...
+```
+
+(Colors shown as labels for clarity — terminal uses ANSI color codes.)
+
+---
+
 ## 📝 OOP Principles Demonstrated
 
 ### 1. Encapsulation

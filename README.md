@@ -1,76 +1,73 @@
-# 🎮 Codémon: Terminal Trials
+## Sample Output
 
-**A terminal-based, object-oriented Pokémon-style battle simulator** that fetches real species data from [PokéAPI](https://pokeapi.co/). Turn-based combat with type effectiveness, critical hits, and strategic move selection-all in your console.
+Below are concise examples of what you'll see while running the game. Color names are shown as labels (e.g. [GREEN]) for readability — the terminal shows ANSI colors.
 
----
-
-## 📋 Table of Contents
-
-1. [Project Title](#project-title)
-2. [Description & Overview](#description--overview)
-3. [OOP Concepts Applied](#oop-concepts-applied)
-4. [Program Structure](#program-structure)
-5. [How to Run](#how-to-run)
-6. [Sample Output](#sample-output)
-7. [Author & Acknowledgement](#author--acknowledgement)
-8. [Future Enhancements](#future-enhancements)
-9. [References](#references)
-
----
-
-## Project Title
-
-**Codémon: Terminal Trials** - A Turn-Based Battle Simulator
-
----
-
-## Description & Overview
-
-**Purpose**: Codémon is a Java command-line game demonstrating object-oriented design principles while delivering a playable turn-based battle experience. Players create custom Pokémon-like creatures or fetch real species from PokéAPI, then engage in strategic turn-based combat.
-
-**Main Features**:
-- 🎮 **Turn-based combat** with move selection, type effectiveness, STAB bonuses, and critical hits
-- 🌐 **PokéAPI integration** for real Pokémon type relationships and stats
-- 🎨 **ANSI-colored console UI** with title art, menus, and HP bars
-- 📊 **Damage formula** incorporating type matchups, attack/defense stats, and variance
-- 📜 **Pokédex viewer** to browse first 151 Pokémon names
-- 🔍 **Type effectiveness system** with cached lookups for performance
-
-**Problem Solved**: Educational tool for learning OOP design patterns while creating an engaging, interactive console application that integrates with real-world APIs.
-
----
-
-## OOP Concepts Applied
-
-### 1. **Encapsulation**
-Private fields with controlled access through getters and setters ensure data integrity.
-
-**Example: `PKM.java`**
-```java
-public class PKM {
-    private String name, type;
-    private int hp, attack, defense;
-    private List<Move> moves;
-    
-    public PKM(String name, String type, int hp, int attack, int defense) {
-        this.hp = Math.max(0, hp);  // Validation
-        this.attack = Math.max(0, attack);
-        this.defense = Math.max(0, defense);
-    }
-    
-    public void setHp(int hp) { this.hp = Math.max(0, hp); }  // Setter validation
-    public int getHp() { return hp; }
-}
+### Main Menu (Colorful Terminal)
 ```
-- Private fields prevent direct manipulation
-- Constructor & setters validate inputs (e.g., no negative stats)
-- Public getters provide safe read access
+[GREEN] 1. Battle
+[BLUE]  2. Pokémon List
+[YELLOW]3. Credits
+[RED]   4. End Game
 
-### 2. **Abstraction**
-Complex operations are hidden behind simple interfaces.
+Choose: 1
+```
 
-**Example: `TypeEffectiveness.java`**
-```java
+### Difficulty Selection
+```
+Choose difficulty:
+1. Easy
+2. Hard
+Choice: 1
+
+Opponent: #006 Charizard (fire)
+Choose your Pokémon ID (1-151): 25  (Pikachu)
+```
+
+### Battle in Progress (Colorful with HP Bars)
+```
+~~Battle Start!~~
+Go! Pikachu (Lv 5)
+
+Pikachu HP: [##########----------]   Charizard HP: [##############------]
+2. Run
+
+Choose: 1
+
+Your Moves:
+1. Thunder Shock (electric, 40)
+2. Quick Attack (normal, 40)
+
+Choose a move: 1
+
+Pikachu used Thunder Shock! It's super effective! Dealt 65 damage.
+Charizard used Flamethrower! Not very effective... Dealt 22 damage.
+
+=== Battle Menu ===
+Pikachu HP: [###########---------]   Charizard HP: [#########-----------]
+...
+```
+
+### Victory Screen
+```
+*** Victory! ***
+Pikachu gained 28 XP!
+Pikachu leveled up to Lv 6!
+Max HP increased to 62
+
+[BLUE]Press Enter to continue...
+```
+
+### Pokémon List
+=== First 151 Codémon ===
+1. bulbasaur
+2. ivysaur
+3. venusaur
+4. charmander
+5. charmeleon
+... (total 151)
+
+[BLUE]Press Enter to continue...
+```
 public static double getMultiplier(String attackType, String defenderType) {
     // Complex logic: HTTP fetch, JSON parsing, caching
     // User sees only: getMultiplier(type1, type2) → 1.0, 2.0, 0.5, etc.
@@ -191,16 +188,6 @@ Each class has one clear purpose.
 
 ## Gameplay Mechanics
 
-### Battle System
-- **Difficulty Modes**: Easy (opponent half-level) vs Hard (opponent same/higher level)
-- **Turn Order**: Determined by Pokémon level + RNG (higher level → goes first)
-- **Move Selection**: Player selects from 2-4 available moves per Pokémon
-- **Automatic Resolution**: Opponent selects random move, simultaneous damage calculation
-
----
-
-## Gameplay Mechanics
-
 ### Battle System Features
 - **Difficulty Modes**: 
   - Easy: Opponent level = Player level - 5
@@ -300,42 +287,7 @@ mvn exec:java -Dexec.mainClass=Codemon.PKMList
 
 ## Sample Output
 
-### Main Menu
-```
-  \  \___/ / \_\_  |
-   \  /  \__  ___/  |
-    \ \___/  \___/  |
-     \ \___/  \___/ |
-      \\\___/  \___/  |
-    CODEMON - Battle Simulator
-
-=== Main Menu ===
-1. Start Battle
-2. View Pokémon List
-3. Credits
-4. Exit
-
-Enter your choice (1-4): 1
-```
-
-### Battle Prompt
-```
-Enter player Pokémon name: Pikachu
-Enter HP (50-200): 100
-Enter Attack (30-150): 90
-Enter Defense (30-150): 60
-Enter type: electric
-
-Enter opponent Pokémon name: Squirtle
-Enter HP (50-200): 100
-Enter Attack (30-150): 70
-Enter Defense (30-150): 80
-Enter type: water
-```
-
-### Sample Output
-
-#### Main Menu (Colorful Terminal)
+### Main Menu (Colorful Terminal)
 ```
 --- Terminal Pokémon Battle ---
 1. Battle
@@ -346,7 +298,7 @@ Enter type: water
 Choose: 1
 ```
 
-#### Difficulty Selection
+### Difficulty Selection
 ```
 Choose difficulty:
 1. Easy
@@ -357,7 +309,7 @@ Opponent: Charizard (Type: fire)
 Choose your Pokémon ID (1-151): 25
 ```
 
-#### Battle in Progress (Colorful with HP Bars)
+### Battle in Progress (Colorful with HP Bars)
 ```
 ⚔️ Battle Start! ⚔️
 Go! Pikachu!
@@ -370,34 +322,38 @@ Pikachu HP: [####################]   Charizard HP: [####################]
 Choose: 1
 
 Your Moves:
-1. Thunder Punch (electric, 75)
-2. Quick Attack (normal, 40)
+1. Thunder Shock (electric, 40)
+2. Thunder Wave (electric, 0)
 
 Choose a move: 1
 
-Pikachu used Thunder Punch! A critical hit! It's super effective! Dealt 65 damage.
+Pikachu used Thunder Shock! It's super effective! Dealt 65 damage.
 Charizard used Flame Burst! Not very effective... Dealt 22 damage.
 
 === Battle Menu ===
 Pikachu HP: [####################]   Charizard HP: [#################---]
-...
-```
 
-#### Victory Screen
-```
+Choose: 1
+
+Pikachu used Thunder Shock! A critical hit! It's super effective! Dealt 97 damage.
+*** Charizard fainted! ***
+
 *** Victory! ***
-Pikachu gained 18 XP!
-Pikachu leveled up to Lv 8!
+Pikachu gained 28 XP!
+Pikachu leveled up to Lv 2!
+Max HP increased to 36!
 
 Press Enter to continue...
 ```
 
-#### Pokémon List
+### Pokémon List
 ```
 === First 151 Codémon ===
 1. bulbasaur
 2. ivysaur
 3. venusaur
+4. charmander
+5. charmeleon
 ... (151 total)
 
 Press Enter to continue...
@@ -441,124 +397,6 @@ Press Enter to continue...
 
 ---
 
-**Build Status**: ✅ SUCCESS (8 source files)  
-**Last Updated**: November 25, 2025
-
-- Polymorphism
-   - Methods that operate on `PKM` or `Species` can accept any concrete species instance. Move behavior is represented by `Move` objects and used uniformly.
-
----
-
-## 4 - Program Structure
-
-Top-level packages and classes (brief):
-
-- `Codemon.MainMenu` - application entry point; prints the title, receives user input, navigates to Battle or Codéx.
-- `Codemon.BattleGame` - contains the battle loop, move selection, damage calculation, and turn resolution.
-- `Codemon.Factory` - fetches and builds `Species` and `Move` objects from the PokéAPI.
-- `Codemon.Species` - holds species data (name, type, hp, attack, defense, moves).
-- `Codemon.Move` - represents a move (name, type, power, accuracy, damage class).
-- `Codemon.PKMList` - prints the first 151 Pokémon names (the Codéx).
-- `Codemon.TypeEffectiveness` - helper for type matchups (returns multipliers).
-
-Class relationships (simple list):
-
-- `MainMenu` → uses `BattleGame` and `PKMList`.
-- `BattleGame` → uses `Species`, `Move`, `TypeEffectiveness`, and `Factory`.
-- `Factory` → constructs `Species` and `Move` objects.
-
----
-
-## 5 - How to Run the Program
-
-Requirements:
-- Java JDK 17 or later
-- Apache Maven
-
-Steps (Windows PowerShell):
-
-1. Open PowerShell and change to the project directory (where `pom.xml` is):
-
-```powershell
-cd "C:\Users\<you>\path\to\Codemon"
-```
-
-2. Compile the project with Maven:
-
-```powershell
-mvn clean compile
-```
-
-3. Run the program using the exec plugin (the main class is configured in `pom.xml`):
-
-```powershell
-mvn exec:java
-```
-
-Notes:
-- If VS Code reports missing class files, run the Maven compile above and then reload/clean the Java language server (Ctrl+Shift+P → "Java: Clean the Java language server workspace").
-
----
-
-## 6 - Sample Output
-
-Below is a short example of what you will see when you run the game (trimmed):
-
-```text
---- Terminal Pokémon Battle ---
-1. Battle
-2. Pokémon List
-3. Credits
-4. End Game
-Choose: 1
-
-Choose difficulty:
-1. Easy  2. Hard
-1 or 2?: 1
-Opponent: Pikachu (Type: electric)
-Choose your Pokémon ID (1-151): 25
-
-⚔️ Battle Start! ⚔️
-Go! Pikachu!
-
-=== Battle Menu ===
-Pikachu HP: [██████████----------] 35/70   Bulbasaur HP: [██████------------] 22/50
-1. Fight
-2. Run
-Choose: 1
-
-Your Moves:
-1. Thunder Shock (electric, 40)
-2. Growl (normal, 0)
-Choose a move: 1
-Pikachu used Thunder Shock! It's super effective! Dealt 15 damage.
-
-*** Victory! ***
-Press Enter to continue...
-```
-
----
-
-## 7 - Author and Acknowledgements
-
-Authors:
-- Jev Austin Apolinar
-- Rjay Arazula
-- Ken Frankie Mendoza
-
-Acknowledgements:
-- PokéAPI (https://pokeapi.co/) for species and move data
-- The Java community and open-source libraries used during development
-
----
-
-## 8 - Other Sections (optional)
-
-### Future Enhancements
-- Add persistent save/load with a consistent file format
-- Implement more complete battle rules (status conditions, abilities, items)
-- Add automated tests and CI checks
-
-### References
-- PokéAPI - https://pokeapi.co/
-- Maven Exec Plugin - https://www.mojohaus.org/exec-maven-plugin/
+**Build Status**: ✅ SUCCESS (9 source files)  
+**Last Updated**: November 25, 2025  
+**Version**: 1.0 (Finalized)
