@@ -38,7 +38,7 @@ public class BattleGame {
             opponent = boostOpponent(opponent);
         }
 
-        System.out.println(Colors.CYAN + "\n⚔️ Battle Start! ⚔️" + Colors.RESET);
+        System.out.println(Colors.CYAN + "\n~~ Battle Start! ~~" + Colors.RESET);
         System.out.println(Colors.GREEN + "Go! " + player.getName() + "!" + Colors.RESET);
         battleLoop(scanner, player, opponent);
     }
@@ -167,7 +167,7 @@ public class BattleGame {
         int filled = (int) ((double) hp / maxHp * totalBars);
         StringBuilder bar = new StringBuilder("[");
         for (int i = 0; i < totalBars; i++) {
-            bar.append(i < filled ? "#" : "-");
+            bar.append(i < filled ? "█" : "-");
         }
         bar.append("]");
         return bar.toString();

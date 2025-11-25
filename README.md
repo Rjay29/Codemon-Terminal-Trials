@@ -1,6 +1,6 @@
 # 🎮 Codémon: Terminal Trials
 
-**A terminal-based, object-oriented Pokémon-style battle simulator** that fetches real species data from [PokéAPI](https://pokeapi.co/). Turn-based combat with type effectiveness, critical hits, and strategic move selection—all in your console.
+**A terminal-based, object-oriented Pokémon-style battle simulator** that fetches real species data from [PokéAPI](https://pokeapi.co/). Turn-based combat with type effectiveness, critical hits, and strategic move selection-all in your console.
 
 ---
 
@@ -20,7 +20,7 @@
 
 ## Project Title
 
-**Codémon: Terminal Trials** — A Turn-Based Battle Simulator
+**Codémon: Terminal Trials** - A Turn-Based Battle Simulator
 
 ---
 
@@ -83,7 +83,7 @@ public static double getMultiplier(String attackType, String defenderType) {
 Base class defines common structure; subclasses extend functionality.
 
 **Example: Class Hierarchy**
-- `PKM` (base class) — defines shared Pokémon properties
+- `PKM` (base class) - defines shared Pokémon properties
 - Future subclasses could specialize (e.g., `LegendaryPKM`, `MythicalPKM`)
 
 ### 4. **Exception Handling**
@@ -173,20 +173,19 @@ Each class has one clear purpose.
 └──────────────────────────────────────────┘
 ```
 
-### Key Classes (10 Files)
+### Key Classes (9 Files)
 
-| Class | Purpose |
-|-------|---------|
-| `MainMenu.java` | Entry point; colorized menu; Colors inner class |
-| `BattleGame.java` | Battle engine; difficulty modes; turn order; Colors inner class; pause() utility |
-| `PKM.java` | Base/concrete Pokémon model |
-| `Species.java` | Concrete Pokémon with level, HP, maxHp, attack, defense, moves |
-| `Move.java` | Immutable move data (name, type, power, accuracy, damageClass) |
-| `Factory.java` | Creates Species from PokéAPI (1-151) |
-| `TypeEffectiveness.java` | Type matchup caching & lazy loading |
-| `PKMList.java` | Fetch & display first 151 Pokémon with pause prompt |
-| `Colors.java` | ANSI color constants (standalone utility or inner class) |
-| `PokeAPI.java` | Debug tool for dumping Pokémon data |
+| Class | Purpose | Responsibilities |
+|-------|---------|------------------|
+| `MainMenu.java` | Entry Point & UI | Menu loop, colorized options, Pokémon ID selection |
+| `BattleGame.java` | Battle Engine | Turn-based combat, damage calc, difficulty modes, pause |
+| `PKM.java` | Base Pokémon Model | Base class with stats (name, type, hp, attack, defense) |
+| `Species.java` | Concrete Pokémon | Level, experience, maxHp tracking, level-ups |
+| `Move.java` | Immutable Move Data | Move properties (name, type, power, accuracy) |
+| `Factory.java` | Pokémon Creator | Creates Species from PokéAPI (fetches 1-151) |
+| `TypeEffectiveness.java` | Type Cache | Caches type effectiveness multipliers from PokéAPI |
+| `PKMList.java` | Pokédex Viewer | Displays all 151 Pokémon with pause prompt |
+| `PokeAPI.java` | Debug Tool | Exports detailed stats for all Pokémon |
 
 ---
 
@@ -198,33 +197,66 @@ Each class has one clear purpose.
 - **Move Selection**: Player selects from 2-4 available moves per Pokémon
 - **Automatic Resolution**: Opponent selects random move, simultaneous damage calculation
 
-### Damage Formula
+---
+
+## Gameplay Mechanics
+
+### Battle System Features
+- **Difficulty Modes**: 
+  - Easy: Opponent level = Player level - 5
+  - Hard: Opponent level = Player level + 0 to +2
+- **Turn Order**: Determined by Pokémon level + RNG (higher level acts first)
+- **Move Selection**: Player chooses from 2-4 available moves per battle
+- **Opponent AI**: Randomly selects moves (simple but effective)
+- **Running Away**: 50% success rate to escape battle
+
+### Damage Calculation
 ```
 Base Damage = (Level × 0.2 + 1) × Power × (Attack / Defense) × Effectiveness × STAB × Variance × Crit
 
 Where:
 - Effectiveness: 2.0 (super effective), 1.0 (neutral), 0.5 (not very effective), 0.0 (immune)
-- STAB: 1.5× if move type matches Pokémon type
-- Variance: 0.85–1.0 random multiplier
-- Crit: 1.5× on critical hit (6.25% chance)
+- STAB: 1.5× if move type matches Pokémon type, else 1.0×
+- Variance: 0.85–1.0 random multiplier for unpredictability
+- Crit: 1.5× on critical hit (6.25% chance per attack)
 ```
 
 ### Experience & Leveling
-- **XP Gain**: 10–30 XP per battle (varies by opponent level)
+- **XP Gain**: 10–30 XP per battle (scales with opponent level)
 - **Level Up Threshold**: 100 XP per level
-- **Max Level**: Level 99 (arbitrary limit)
-- **HP Growth**: `hp_at_level = base_hp + (level - 1) × 2`
+- **HP Growth**: +2 HP per level (both current and max)
+- **Max Level**: 99
+- **Example**: 
+  - Start Lv 1, 0 XP
+  - Win battle, gain 25 XP → Lv 1, 25 XP
+  - Win 3 more battles → Lv 2, 0 XP (level up!)
 
 ### Type Effectiveness System
-- **Cached Lookups**: First call fetches from PokéAPI; subsequent calls use in-memory cache
-- **Type Matchups**: Supports 18 Pokémon types (normal, fire, water, electric, grass, ice, fighting, poison, ground, flying, psychic, bug, rock, ghost, dragon, dark, steel, fairy)
-- **Fallback**: Returns 1.0 (neutral) if API unavailable
+- **18 Pokémon Types**: normal, fire, water, electric, grass, ice, fighting, poison, ground, flying, psychic, bug, rock, ghost, dragon, dark, steel, fairy
+- **Caching**: First lookup hits PokéAPI; subsequent lookups use in-memory cache
+- **Multipliers**: 
+  - 2.0× (super effective): e.g., Water beats Fire
+  - 1.0× (neutral): most matchups
+  - 0.5× (not very effective): e.g., Fire resists Grass
+  - 0.0× (immune): e.g., Electric can't affect Ground-types
 
-### User Interface
-- **Colorized Menus**: ANSI colors (red, green, yellow, blue, purple, cyan)
-- **HP Bars**: Visual 20-character gauge showing remaining HP
-- **Pause Prompts**: "Press Enter to continue..." after battles, running away, and viewing Pokémon list
-- **Battle Feedback**: Effectiveness messages, damage numbers, XP/level notifications
+### Colorization & UI
+- **Colors Used**:
+  - 🟢 **Green**: Player actions, "Battle" menu
+  - 🔵 **Blue**: Pause prompts, "Continue" messages
+  - 🟡 **Yellow**: "Pokémon List" menu, titles
+  - 🔴 **Red**: Errors, opponent actions, "End Game" menu
+  - 🟣 **Purple**: Credits, special messages
+  - 🟦 **Cyan**: Informational text, Pokédex
+  - ⚪ **Reset**: Clears color formatting
+- **HP Bars**: Visual 20-character gauge showing remaining health
+  - Example: `[##########----------]` = 50% HP
+
+### Pause Prompts
+- **After battle** (victory/defeat)
+- **When running away** (success or fail)
+- **After Pokémon list** (for better UX)
+- **Purpose**: Allow players time to read battle results
 
 ---
 
@@ -380,7 +412,7 @@ Press Enter to continue...
 **License**: MIT
 
 **Acknowledgements**:
-- 🙏 [PokéAPI](https://pokeapi.co/) — Comprehensive Pokémon data API
+- 🙏 [PokéAPI](https://pokeapi.co/) - Comprehensive Pokémon data API
 - 🎓 Object-Oriented Programming principles & design patterns
 - 📚 Java documentation & Maven build tools
 
@@ -388,14 +420,14 @@ Press Enter to continue...
 
 ## Future Enhancements
 
-- ⚡ **Leveling System** — Pokémon gain experience and level up
-- 💾 **Save/Load Game** — Persist player progress to file
-- 🎯 **Difficulty Modes** — Easy, Normal, Hard with AI strategies
-- 🏆 **Leaderboard** — Track high scores and win streaks
-- 🌐 **Multiplayer** — Network-based battles between players
-- 📊 **Statistics Tracking** — Win/loss ratios, damage dealt, etc.
-- 🎵 **Sound Effects** — ASCII-based sound or integration with system audio
-- 🗺️ **Gym Leaders** — Pre-built boss Pokémon to challenge
+- ⚡ **Leveling System** - Pokémon gain experience and level up
+- 💾 **Save/Load Game** - Persist player progress to file
+- 🎯 **Difficulty Modes** - Easy, Normal, Hard with AI strategies
+- 🏆 **Leaderboard** - Track high scores and win streaks
+- 🌐 **Multiplayer** - Network-based battles between players
+- 📊 **Statistics Tracking** - Win/loss ratios, damage dealt, etc.
+- 🎵 **Sound Effects** - ASCII-based sound or integration with system audio
+- 🗺️ **Gym Leaders** - Pre-built boss Pokémon to challenge
 
 ---
 
@@ -405,7 +437,7 @@ Press Enter to continue...
 - [Java OOP Concepts](https://docs.oracle.com/javase/tutorial/java/concepts/)
 - [Pokémon Type Effectiveness Chart](https://bulbapedia.bulbagarden.net/wiki/Type)
 - [Maven Build Tool](https://maven.apache.org/)
-- [Effective Java (3rd Edition)](https://www.oreilly.com/library/view/effective-java/9780134685991/) — Design patterns & best practices
+- [Effective Java (3rd Edition)](https://www.oreilly.com/library/view/effective-java/9780134685991/) - Design patterns & best practices
 
 ---
 
@@ -417,17 +449,17 @@ Press Enter to continue...
 
 ---
 
-## 4 — Program Structure
+## 4 - Program Structure
 
 Top-level packages and classes (brief):
 
-- `Codemon.MainMenu` — application entry point; prints the title, receives user input, navigates to Battle or Codéx.
-- `Codemon.BattleGame` — contains the battle loop, move selection, damage calculation, and turn resolution.
-- `Codemon.Factory` — fetches and builds `Species` and `Move` objects from the PokéAPI.
-- `Codemon.Species` — holds species data (name, type, hp, attack, defense, moves).
-- `Codemon.Move` — represents a move (name, type, power, accuracy, damage class).
-- `Codemon.PKMList` — prints the first 151 Pokémon names (the Codéx).
-- `Codemon.TypeEffectiveness` — helper for type matchups (returns multipliers).
+- `Codemon.MainMenu` - application entry point; prints the title, receives user input, navigates to Battle or Codéx.
+- `Codemon.BattleGame` - contains the battle loop, move selection, damage calculation, and turn resolution.
+- `Codemon.Factory` - fetches and builds `Species` and `Move` objects from the PokéAPI.
+- `Codemon.Species` - holds species data (name, type, hp, attack, defense, moves).
+- `Codemon.Move` - represents a move (name, type, power, accuracy, damage class).
+- `Codemon.PKMList` - prints the first 151 Pokémon names (the Codéx).
+- `Codemon.TypeEffectiveness` - helper for type matchups (returns multipliers).
 
 Class relationships (simple list):
 
@@ -437,7 +469,7 @@ Class relationships (simple list):
 
 ---
 
-## 5 — How to Run the Program
+## 5 - How to Run the Program
 
 Requirements:
 - Java JDK 17 or later
@@ -468,7 +500,7 @@ Notes:
 
 ---
 
-## 6 — Sample Output
+## 6 - Sample Output
 
 Below is a short example of what you will see when you run the game (trimmed):
 
@@ -507,7 +539,7 @@ Press Enter to continue...
 
 ---
 
-## 7 — Author and Acknowledgements
+## 7 - Author and Acknowledgements
 
 Authors:
 - Jev Austin Apolinar
@@ -520,7 +552,7 @@ Acknowledgements:
 
 ---
 
-## 8 — Other Sections (optional)
+## 8 - Other Sections (optional)
 
 ### Future Enhancements
 - Add persistent save/load with a consistent file format
@@ -528,7 +560,5 @@ Acknowledgements:
 - Add automated tests and CI checks
 
 ### References
-- PokéAPI — https://pokeapi.co/
-- Maven Exec Plugin — https://www.mojohaus.org/exec-maven-plugin/
-
-"""
+- PokéAPI - https://pokeapi.co/
+- Maven Exec Plugin - https://www.mojohaus.org/exec-maven-plugin/
