@@ -8,53 +8,32 @@ import java.net.URL;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class PokeAPI {
+public final class PokeAPI {
     public static void main(String[] args) {
-        for (int id = 1; id <= 151; id++) {
+        System.out.println("Fetching first 151 Pokémon from PokéAPI...\n");
+        for (int i = 1; i <= 151; i++) {
             try {
-                String apiUrl = "https://pokeapi.co/api/v2/pokemon/" + id;
-                URL url = URI.create(apiUrl).toURL(); // ✅ fixed
+                URL url = URI.create("https://pokeapi.co/api/v2/pokemon/" + i).toURL();
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
-
                 BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 StringBuilder response = new StringBuilder();
                 String line;
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
+                while ((line = reader.readLine()) != null) response.append(line);
                 reader.close();
 
-                JSONObject pokemon = new JSONObject(response.toString());
-                String name = pokemon.getString("name");
-                JSONArray typesArray = pokemon.getJSONArray("types");
-                JSONArray statsArray = pokemon.getJSONArray("stats");
+                JSONObject obj = new JSONObject(response.toString());
+                String name = obj.getString("name");
+                JSONArray types = obj.getJSONArray("types");
+                JSONArray stats = obj.getJSONArray("stats");
+                int hp = stats.getJSONObject(0).getInt("base_stat");
+                int atk = stats.getJSONObject(1).getInt("base_stat");
+                int def = stats.getJSONObject(2).getInt("base_stat");
 
-                System.out.println("ID: " + id);
-                System.out.println("Name: " + capitalize(name));
-                System.out.print("Type(s): ");
-                for (int i = 0; i < typesArray.length(); i++) {
-                    String type = typesArray.getJSONObject(i).getJSONObject("type").getString("name");
-                    System.out.print(capitalize(type) + (i < typesArray.length() - 1 ? ", " : ""));
-                }
-                System.out.println();
-
-                for (int i = 0; i < statsArray.length(); i++) {
-                    String statName = statsArray.getJSONObject(i).getJSONObject("stat").getString("name");
-                    int baseStat = statsArray.getJSONObject(i).getInt("base_stat");
-                    System.out.println(capitalize(statName) + ": " + baseStat);
-                }
-
-                System.out.println("--------------------------------------------------");
-
+                System.out.println(i + ". " + name + " - HP: " + hp + " ATK: " + atk + " DEF: " + def);
             } catch (Exception e) {
-                System.out.println("Failed to fetch Pokémon ID " + id);
-                e.printStackTrace();
+                System.out.println(i + ". Error fetching data");
             }
         }
-    }
-
-    private static String capitalize(String str) {
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }

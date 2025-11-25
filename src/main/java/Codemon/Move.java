@@ -1,11 +1,8 @@
 package Codemon;
 
 public class Move {
-    private final String name;
-    private final String type;
-    private final int power;
-    private final int accuracy;
-    private final String damageClass;
+    private final String name, type, damageClass;
+    private final int power, accuracy;
 
     public Move(String name, String type, int power, int accuracy, String damageClass) {
         this.name = name;

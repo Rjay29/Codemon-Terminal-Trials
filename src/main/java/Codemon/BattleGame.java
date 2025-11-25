@@ -1,164 +1,110 @@
 package Codemon;
 
-import java.util.Random;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class BattleGame {
-    public static void startBattle(Scanner scanner) {
-        System.out.println("\nChoose difficulty:");
-        System.out.println("1. Easy");
-        System.out.println("2. Hard");
-        System.out.println("1 or 2?: ");
-        int difficulty = scanner.nextInt();
+    private PKM player;
+    private PKM opponent;
+    private Scanner scanner;
 
-        Species opponent = Factory.createFromAPI(new Random().nextInt(151) + 1);
-        Species player;
-
-        if (difficulty == 1) {
-            System.out.println("Opponent: " + opponent.getName() + " (Type: " + opponent.getType() + ")");
-            System.out.print("Choose your Pokémon ID (1-151): ");
-            player = Factory.createFromAPI(scanner.nextInt());
-        } else {
-            System.out.print("Choose your Pokémon ID (1-151): ");
-            player = Factory.createFromAPI(scanner.nextInt());
-            System.out.println("Opponent: " + opponent.getName() + " (Type: " + opponent.getType() + ")");
-            opponent = boostOpponent(opponent);
-        }
-
-        System.out.println("\nBattle Start!");
-        battleLoop(scanner, player, opponent);
+    public BattleGame(PKM player, PKM opponent) {
+        this.player = player;
+        this.opponent = opponent;
+        this.scanner = new Scanner(System.in);
     }
 
-    private static void battleLoop(Scanner scanner, Species player, Species opponent) {
-        // Battle continues until one Pokémon faints or player runs
+    public void startBattle() {
+        System.out.println("\n" + Colors.YELLOW + "=== Battle Start ===" + Colors.RESET);
+        System.out.println("Player: " + player.getName() + " (HP: " + player.getHp() + ")");
+        System.out.println("Opponent: " + opponent.getName() + " (HP: " + opponent.getHp() + ")\n");
+        battleLoop();
+    }
+
+    private void battleLoop() {
         while (player.getHp() > 0 && opponent.getHp() > 0) {
-            System.out.println("\n--- Battle Menu ---");
-            System.out.println(player.getName() + " HP: " + player.getHp() + "    " + opponent.getName() + " HP: " + opponent.getHp());
-            System.out.println("1. Fight");
-            System.out.println("2. Run");
-            System.out.print("Choose: ");
-            int choice = scanner.nextInt();
-
-            if (choice == 2) {
-                System.out.println("You ran away!");
-                return;
-            } else if (choice != 1) {
-                System.out.println("Invalid choice.");
-                continue;
-            }
-
-            // Determine turn order by level (higher level acts first); tie -> player first
-            boolean playerFirst = player.getLevel() >= opponent.getLevel();
-
-            if (playerFirst) {
-                boolean opponentFainted = playerTurn(scanner, player, opponent);
-                if (opponentFainted) break;
-                boolean playerFainted = opponentTurn(opponent, player);
-                if (playerFainted) break;
-            } else {
-                boolean playerFainted = opponentTurn(opponent, player);
-                if (playerFainted) break;
-                boolean opponentFainted = playerTurn(scanner, player, opponent);
-                if (opponentFainted) break;
-            }
+            System.out.println(Colors.CYAN + "\n--- Turn ---" + Colors.RESET);
+            System.out.println(hpBar("Player", player) + " | " + hpBar("Opponent", opponent));
+            playerTurn();
+            if (opponent.getHp() <= 0) break;
+            opponentTurn();
         }
-
-        if (player.getHp() > 0) {
-            System.out.println("\nYou won!");
-            int xpGain = 10 + new Random().nextInt(20);
-            int newLevel = player.getLevel() + xpGain / 10;
-            if (newLevel > player.getLevel()) {
-                System.out.println(player.getName() + " leveled up to Lv " + newLevel + "!");
-                player.setLevel(newLevel);
-            }
-        } else {
-            System.out.println("\nYou lost...");
-        }
+        endBattle();
     }
 
-    private static boolean playerTurn(Scanner scanner, Species player, Species opponent) {
+    private void playerTurn() {
         List<Move> moves = player.getMoves();
-        System.out.println("\nYour Moves:");
+        if (moves == null || moves.isEmpty()) {
+            System.out.println("Player has no moves!");
+            return;
+        }
+        System.out.println("\n" + Colors.GREEN + "Player's turn:" + Colors.RESET);
         for (int i = 0; i < moves.size(); i++) {
-            Move m = moves.get(i);
-            System.out.println((i + 1) + ". " + m.getName() + " (" + m.getType() + ", " + m.getPower() + ")");
+            System.out.println((i + 1) + ". " + moves.get(i).getName());
         }
+        int choice = readInt("Choose move (1-" + moves.size() + "): ", 1, moves.size());
+        Move move = moves.get(choice - 1);
+        int damage = calculateDamage(player.getAttack(), opponent.getDefense(), move.getPower(),
+            TypeEffectiveness.getMultiplier(move.getType(), opponent.getType()),
+            move.getType().equalsIgnoreCase(player.getType()) ? 1.5 : 1.0, Math.random() > 0.8 ? 1.5 : 1.0);
+        opponent.setHp(opponent.getHp() - damage);
+        System.out.println(Colors.GREEN + player.getName() + " used " + move.getName() + "!" + Colors.RESET);
+        System.out.println(effectivenessText(TypeEffectiveness.getMultiplier(move.getType(), opponent.getType())));
+        System.out.println(Colors.RED + "Damage dealt: " + damage + Colors.RESET);
+    }
 
-        System.out.print("Choose a move: ");
-        int choice = scanner.nextInt() - 1;
-        Move move = moves.get(choice);
-        // Accuracy check
-        if (new Random().nextInt(100) < move.getAccuracy()) {
-            // Critical hit (6.25% chance)
-            boolean crit = new Random().nextInt(16) == 0;
-            double critMultiplier = crit ? 1.5 : 1.0;
+    private void opponentTurn() {
+        List<Move> moves = opponent.getMoves();
+        if (moves == null || moves.isEmpty()) {
+            System.out.println("Opponent has no moves!");
+            return;
+        }
+        Move move = moves.get(new Random().nextInt(moves.size()));
+        int damage = calculateDamage(opponent.getAttack(), player.getDefense(), move.getPower(),
+            TypeEffectiveness.getMultiplier(move.getType(), player.getType()),
+            move.getType().equalsIgnoreCase(opponent.getType()) ? 1.5 : 1.0, Math.random() > 0.8 ? 1.5 : 1.0);
+        player.setHp(player.getHp() - damage);
+        System.out.println(Colors.RED + "\n" + opponent.getName() + " used " + move.getName() + "!" + Colors.RESET);
+        System.out.println(effectivenessText(TypeEffectiveness.getMultiplier(move.getType(), player.getType())));
+        System.out.println(Colors.BLUE + "Damage taken: " + damage + Colors.RESET);
+    }
 
-            // STAB (same type attack bonus)
-            double stab = move.getType().equalsIgnoreCase(player.getType()) ? 1.5 : 1.0;
+    private int calculateDamage(int atk, int def, int power, double typeMultiplier, double stab, double crit) {
+        double base = ((power * ((double) atk / Math.max(1, def))) / 50.0) + 2.0;
+        double variance = 0.85 + (Math.random() * 0.15);
+        double damage = base * typeMultiplier * stab * crit * variance;
+        return (int) Math.max(1, Math.floor(damage));
+    }
 
-            double typeMultiplier = TypeEffectiveness.getMultiplier(move.getType(), opponent.getType());
+    private String hpBar(String name, PKM pkm) {
+        int bars = Math.max(0, (pkm.getHp() / 10));
+        return name + ": [" + "█".repeat(bars) + "░".repeat(10 - bars) + "] " + pkm.getHp();
+    }
 
-            int damage = calculatePokemonDamage(player.getLevel(), player.getAttack(), opponent.getDefense(), move.getPower(), typeMultiplier, stab, critMultiplier);
-            opponent.setHp(Math.max(0, opponent.getHp() - damage));
+    private String effectivenessText(double multiplier) {
+        if (multiplier > 1.0) return Colors.GREEN + "Super effective!" + Colors.RESET;
+        if (multiplier < 1.0 && multiplier > 0.0) return Colors.BLUE + "Not very effective..." + Colors.RESET;
+        if (multiplier == 0.0) return Colors.YELLOW + "No effect..." + Colors.RESET;
+        return "";
+    }
 
-            System.out.print(player.getName() + " used " + move.getName() + "! ");
-            if (crit) System.out.print("A critical hit! ");
-            System.out.println(effectivenessText(typeMultiplier) + " Dealt " + damage + " damage.");
+    private void endBattle() {
+        if (player.getHp() > 0) {
+            System.out.println("\n" + Colors.GREEN + "=== You won! ===" + Colors.RESET);
         } else {
-            System.out.println(player.getName() + " missed!");
+            System.out.println("\n" + Colors.RED + "=== You lost! ===" + Colors.RESET);
         }
-
-        return opponent.getHp() <= 0;
     }
 
-    private static boolean opponentTurn(Species opponent, Species player) {
-        Move move = opponent.getMoves().get(new Random().nextInt(opponent.getMoves().size()));
-        if (new Random().nextInt(100) < move.getAccuracy()) {
-            boolean crit = new Random().nextInt(16) == 0;
-            double critMultiplier = crit ? 1.5 : 1.0;
-            double stab = move.getType().equalsIgnoreCase(opponent.getType()) ? 1.5 : 1.0;
-            double typeMultiplier = TypeEffectiveness.getMultiplier(move.getType(), player.getType());
-
-            int damage = calculatePokemonDamage(opponent.getLevel(), opponent.getAttack(), player.getDefense(), move.getPower(), typeMultiplier, stab, critMultiplier);
-            player.setHp(Math.max(0, player.getHp() - damage));
-
-            System.out.print(opponent.getName() + " used " + move.getName() + "! ");
-            if (crit) System.out.print("A critical hit! ");
-            System.out.println(effectivenessText(typeMultiplier) + " Dealt " + damage + " damage.");
-        } else {
-            System.out.println(opponent.getName() + " missed!");
+    private int readInt(String prompt, int min, int max) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                int val = Integer.parseInt(scanner.nextLine());
+                if (val >= min && val <= max) return val;
+                System.out.println("Please enter a number between " + min + " and " + max + ".");
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+            }
         }
-
-        return player.getHp() <= 0;
-    }
-
-    // New Pokemon-like damage formula that includes level, STAB, criticals and variance
-    private static int calculatePokemonDamage(int level, int atk, int def, int power, double typeMultiplier, double stab, double crit) {
-        // Classic-ish formula: (((2*L/5 + 2) * Power * A/D) / 50 + 2) * Modifiers
-        double base = (((2.0 * level) / 5.0 + 2.0) * power * ((double) atk / Math.max(1, def)) / 50.0) + 2.0;
-        // Random variance between 85% - 100%
-        double variance = 0.85 + (new Random().nextDouble() * 0.15);
-        double modifier = typeMultiplier * stab * crit * variance;
-        return (int) Math.max(1, Math.floor(base * modifier));
-    }
-
-    private static String effectivenessText(double multiplier) {
-        if (multiplier == 2.0) return "It's super effective!";
-        if (multiplier == 0.5) return "Not very effective...";
-        if (multiplier == 0.0) return "It had no effect!";
-        return "Effective.";
-    }
-
-    private static Species boostOpponent(Species original) {
-        return new Species(
-            original.getName(),
-            original.getType(),
-            original.getLevel() + 5,
-            original.getHp() * 2,
-            original.getAttack() * 2,
-            original.getDefense() * 2,
-            original.getMoves()
-        );
     }
 }

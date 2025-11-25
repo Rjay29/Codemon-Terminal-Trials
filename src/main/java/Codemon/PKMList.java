@@ -8,13 +8,12 @@ import java.net.URL;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class PKMList {
+public final class PKMList {
     public static void showList() {
         try {
             URL url = URI.create("https://pokeapi.co/api/v2/pokemon?limit=151").toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
-
             BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             StringBuilder response = new StringBuilder();
             String line;
@@ -23,19 +22,13 @@ public class PKMList {
 
             JSONObject obj = new JSONObject(response.toString());
             JSONArray results = obj.getJSONArray("results");
-
-            System.out.println("\n--- Pokemon List ---");
+            System.out.println("\n" + Colors.CYAN + "=== First 151 Pokémon ===" + Colors.RESET);
             for (int i = 0; i < results.length(); i++) {
-                String name = results.getJSONObject(i).getString("name");
-                System.out.println((i + 1) + ". " + capitalize(name));
+                System.out.println((i + 1) + ". " + results.getJSONObject(i).getString("name"));
             }
+            System.out.println();
         } catch (Exception e) {
-            System.out.println("Failed to load Pokemon list.");
-            e.printStackTrace();
+            System.out.println("Error fetching Pokémon list: " + e.getMessage());
         }
-    }
-
-    private static String capitalize(String str) {
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }

@@ -12,111 +12,160 @@ This project is a Java-based command-line game that simulates Pokémon battles u
 
 ## 🧠 How It Works + OOP Concepts
 
-The game is built around four key OOP principles:
+"""
+# 🎮 Codémon: Terminal Trials
 
-| Concept         | Implementation                                                                 |
-|------------------|-------------------------------------------------------------------------------|
-| **Abstraction**   | `Pokemon` is an abstract class defining shared attributes and behaviors.     |
-| **Encapsulation** | Pokémon stats and moves are private, accessed via getters/setters.           |
-| **Inheritance**   | `PokemonSpecies` extends `Pokemon` and represents any species dynamically.   |
-| **Polymorphism**  | `useMove()` behaves differently depending on the Pokémon subclass.           |
-
-### 🎮 Pokémon-Inspired Mechanics
-
-- **Turn-based combat**: Players and opponents take turns using moves.
-- **Moves**: Each Pokémon has 4 real moves with power, accuracy, and type.
-- **Type effectiveness**: Fire > Grass, Water > Fire, etc., based on PokéAPI data.
-- **Leveling**: Pokémon gain XP and level up after battles.
-- **Difficulty modes**:
-  - **Easy**: See opponent before choosing your Pokémon.
-  - **Hard**: Choose blindly; opponent is stronger.
+A terminal-based, object-oriented Pokémon-style battle simulator that fetches real move and species data from the PokéAPI. The program demonstrates OOP concepts while providing a nostalgic, turn-based battle experience in the console.
 
 ---
 
-## 🧩 Components Overview
+## 1 — Project Title
 
-| File/Class            | Purpose                                                                 |
-|------------------------|------------------------------------------------------------------------|
-| `MainMenu.java`        | CLI entry point with menu: Battle, Load, Pokémon List, Credits, Exit   |
-| `BattleGame.java`      | Handles battle logic, difficulty, turn order, and XP system            |
-| `Pokemon.java`         | Abstract base class for all Pokémon                                    |
-| `PokemonSpecies.java`  | Generic subclass representing any Pokémon using API data               |
-| `Move.java`            | Represents a move with power, accuracy, type, and damage class         |
-| `PokemonFactory.java`  | Fetches Pokémon and moves from PokéAPI                                 |
-| `TypeEffectiveness.java` | Calculates damage multipliers based on type matchups                 |
-| `PokemonList.java`     | Displays the first 151 Pokémon names from PokéAPI                      |
+Codémon: Terminal Trials
 
 ---
 
-## 🛠️ What to Download First
+## 2 — Description / Overview
 
-1. **Java Development Kit (JDK 17 or higher)**  
-   [Download JDK](https://www.oracle.com/java/technologies/javase-downloads.html)
+Codémon is a Java command-line game that simulates turn-based battles between Pokémon-like species. Each species is constructed from real API data (moves, types, base stats) and battles use type effectiveness, STAB, critical hits, and random variance to compute damage. The project is primarily educational: it demonstrates object-oriented design while producing a small playable game.
 
-2. **Apache Maven**  
-   [Download Maven](https://maven.apache.org/download.cgi)
-
-3. **An IDE or text editor**  
-   - Recommended: [Visual Studio Code](https://code.visualstudio.com/) or [IntelliJ IDEA](https://www.jetbrains.com/idea/)
+Main features:
+- Fetch species and move data from PokéAPI
+- Turn-based combat with move accuracy, criticals, STAB, and type multipliers
+- Simple console UI with a Codéx (Pokémon list), battle menu, and colored prompts
 
 ---
 
-## ⚙️ Project Setup
+## 3 — OOP Concepts Applied
 
-1. **Clone or download the project folder**  
-   Place all `.java` files inside:
+The project applies core OOP principles. Below are the main concepts and how they appear in the codebase.
 
-   ```
-   Codemon/src/main/java/Codemon/
-   ```
+- Abstraction
+   - `PKM` (abstract) defines the shared attributes and behavior common to all species.
 
-2. **Create a `pom.xml`** in the root `Termimon/` folder with the following plugin:
+- Encapsulation
+   - Fields such as `hp`, `attack`, and `defense` are private to classes like `Species` and exposed through getters/setters.
 
-   ```xml
-   <build>
-     <plugins>
-       <plugin>
-         <groupId>org.codehaus.mojo</groupId>
-         <artifactId>exec-maven-plugin</artifactId>
-         <version>3.1.0</version>
-       </plugin>
-     </plugins>
-   </build>
-   ```
+- Inheritance
+   - `Species` and (project pattern) classes share some base attributes via `PKM`; concrete classes represent specific functionality built from this base.
 
-3. **Compile the project**:
-
-   ```bash
-   mvn compile
-   ```
+- Polymorphism
+   - Methods that operate on `PKM` or `Species` can accept any concrete species instance. Move behavior is represented by `Move` objects and used uniformly.
 
 ---
 
-## 🕹️ How to Use It
+## 4 — Program Structure
 
-### 🔸 Start the Game
+Top-level packages and classes (brief):
 
-```bash
+- `Codemon.MainMenu` — application entry point; prints the title, receives user input, navigates to Battle or Codéx.
+- `Codemon.BattleGame` — contains the battle loop, move selection, damage calculation, and turn resolution.
+- `Codemon.Factory` — fetches and builds `Species` and `Move` objects from the PokéAPI.
+- `Codemon.Species` — holds species data (name, type, hp, attack, defense, moves).
+- `Codemon.Move` — represents a move (name, type, power, accuracy, damage class).
+- `Codemon.PKMList` — prints the first 151 Pokémon names (the Codéx).
+- `Codemon.TypeEffectiveness` — helper for type matchups (returns multipliers).
+
+Class relationships (simple list):
+
+- `MainMenu` → uses `BattleGame` and `PKMList`.
+- `BattleGame` → uses `Species`, `Move`, `TypeEffectiveness`, and `Factory`.
+- `Factory` → constructs `Species` and `Move` objects.
+
+---
+
+## 5 — How to Run the Program
+
+Requirements:
+- Java JDK 17 or later
+- Apache Maven
+
+Steps (Windows PowerShell):
+
+1. Open PowerShell and change to the project directory (where `pom.xml` is):
+
+```powershell
+cd "C:\Users\<you>\path\to\Codemon"
+```
+
+2. Compile the project with Maven:
+
+```powershell
+mvn clean compile
+```
+
+3. Run the program using the exec plugin (the main class is configured in `pom.xml`):
+
+```powershell
 mvn exec:java
 ```
 
-### 🔸 Main Menu Options
-
-- **Battle**: Choose difficulty and fight a random opponent
-- **Pokémon List**: View the first 151 Pokémon names
-- **Credits**: View the creators
-- **End Game**: Exit the program
-
-### 🔸 In Battle
-
-- **Fight**: Choose a move to attack
-- **Run**: Flee the battle
+Notes:
+- If VS Code reports missing class files, run the Maven compile above and then reload/clean the Java language server (Ctrl+Shift+P → "Java: Clean the Java language server workspace").
 
 ---
 
-## 👥 Credits
+## 6 — Sample Output
 
-Created by:
-- **Apolinar, Jev Austin**
-- **Arazula, Rjay**
-- **Mendoza, Ken Frankie**
+Below is a short example of what you will see when you run the game (trimmed):
+
+```text
+--- Terminal Pokémon Battle ---
+1. Battle
+2. Pokémon List
+3. Credits
+4. End Game
+Choose: 1
+
+Choose difficulty:
+1. Easy  2. Hard
+1 or 2?: 1
+Opponent: Pikachu (Type: electric)
+Choose your Pokémon ID (1-151): 25
+
+⚔️ Battle Start! ⚔️
+Go! Pikachu!
+
+=== Battle Menu ===
+Pikachu HP: [██████████----------] 35/70   Bulbasaur HP: [██████------------] 22/50
+1. Fight
+2. Run
+Choose: 1
+
+Your Moves:
+1. Thunder Shock (electric, 40)
+2. Growl (normal, 0)
+Choose a move: 1
+Pikachu used Thunder Shock! It's super effective! Dealt 15 damage.
+
+*** Victory! ***
+Press Enter to continue...
+```
+
+---
+
+## 7 — Author and Acknowledgements
+
+Authors:
+- Jev Austin Apolinar
+- Rjay Arazula
+- Ken Frankie Mendoza
+
+Acknowledgements:
+- PokéAPI (https://pokeapi.co/) for species and move data
+- The Java community and open-source libraries used during development
+
+---
+
+## 8 — Other Sections (optional)
+
+### Future Enhancements
+- Add persistent save/load with a consistent file format
+- Implement more complete battle rules (status conditions, abilities, items)
+- Add automated tests and CI checks
+
+### References
+- PokéAPI — https://pokeapi.co/
+- Maven Exec Plugin — https://www.mojohaus.org/exec-maven-plugin/
+
+"""
