@@ -24,7 +24,6 @@ public final class PokeAPI {
 
                 JSONObject obj = new JSONObject(response.toString());
                 String name = obj.getString("name");
-                JSONArray types = obj.getJSONArray("types");
                 JSONArray stats = obj.getJSONArray("stats");
                 int hp = stats.getJSONObject(0).getInt("base_stat");
                 int atk = stats.getJSONObject(1).getInt("base_stat");
