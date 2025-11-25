@@ -28,7 +28,7 @@ Choose your Pokémon ID (1-151): 25  (Pikachu)
 ~~Battle Start!~~
 Go! Pikachu (Lv 5)
 
-Pikachu HP: [##########----------]   Charizard HP: [##############------]
+Pikachu HP: [██████████----------]   Charizard HP: [██████████████------]
 2. Run
 
 Choose: 1
@@ -43,7 +43,7 @@ Pikachu used Thunder Shock! It's super effective! Dealt 65 damage.
 Charizard used Flamethrower! Not very effective... Dealt 22 damage.
 
 === Battle Menu ===
-Pikachu HP: [###########---------]   Charizard HP: [#########-----------]
+Pikachu HP: [███████████---------]   Charizard HP: [█████████-----------]
 ...
 ```
 
@@ -237,7 +237,7 @@ Where:
   - 🟦 **Cyan**: Informational text, Pokédex
   - ⚪ **Reset**: Clears color formatting
 - **HP Bars**: Visual 20-character gauge showing remaining health
-  - Example: `[##########----------]` = 50% HP
+  - Example: `[██████████----------]` = 50% HP
 
 ### Pause Prompts
 - **After battle** (victory/defeat)
@@ -267,7 +267,7 @@ mvn clean compile
 
 ### Step 3: Run the Game
 ```bash
-mvn exec:java -Dexec.mainClass=Codemon.MainMenu
+mvn exec:java
 ```
 The game features **colorful ANSI terminal UI** with color-coded menus and battle output.
 
@@ -315,7 +315,7 @@ Choose your Pokémon ID (1-151): 25
 Go! Pikachu!
 
 === Battle Menu ===
-Pikachu HP: [####################]   Charizard HP: [####################]
+Pikachu HP: [████████████████████]   Charizard HP: [████████████████████]
 1. Fight
 2. Run
 
@@ -331,7 +331,7 @@ Pikachu used Thunder Shock! It's super effective! Dealt 65 damage.
 Charizard used Flame Burst! Not very effective... Dealt 22 damage.
 
 === Battle Menu ===
-Pikachu HP: [####################]   Charizard HP: [#################---]
+Pikachu HP: [████████████████████]   Charizard HP: [█████████████████---]
 
 Choose: 1
 

@@ -18,10 +18,10 @@ public class BattleGame {
     }
 
     public static void startBattle(Scanner scanner) {
-        System.out.println("\nChoose difficulty:");
-        System.out.println("1. Easy");
-        System.out.println("2. Hard");
-        System.out.print("1 or 2?: ");
+        System.out.println(Colors.CYAN + "\nChoose difficulty:" + Colors.RESET);
+        System.out.println(Colors.GREEN + "1. Easy" + Colors.RESET);
+        System.out.println(Colors.RED + "2. Hard" + Colors.RESET);
+        System.out.print(Colors.YELLOW + "1 or 2?: " + Colors.RESET);
         int difficulty = scanner.nextInt();
 
         Species opponent = Factory.createFromAPI(new Random().nextInt(151) + 1);
