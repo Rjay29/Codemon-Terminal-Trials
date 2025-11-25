@@ -7,6 +7,7 @@ public class Species {
     private String type;
     private int level;
     private int hp;
+    private int maxHp;
     private int attack;
     private int defense;
     private List<Move> moves;
@@ -16,6 +17,7 @@ public class Species {
         this.type = type;
         this.level = level;
         this.hp = hp;
+        this.maxHp = hp;
         this.attack = attack;
         this.defense = defense;
         this.moves = moves;
@@ -27,6 +29,7 @@ public class Species {
     public void setLevel(int level) { this.level = level; }
     public int getHp() { return hp; }
     public void setHp(int hp) { this.hp = hp; }
+    public int getMaxHp() { return maxHp; }
     public int getAttack() { return attack; }
     public int getDefense() { return defense; }
     public List<Move> getMoves() { return moves; }

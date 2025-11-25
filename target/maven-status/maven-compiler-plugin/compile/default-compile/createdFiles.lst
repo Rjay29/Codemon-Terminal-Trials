@@ -1,7 +1,11 @@
 Codemon\BattleGame.class
-Codemon\Colors.class
+Codemon\Factory.class
 Codemon\Move.class
+Codemon\Species.class
+Codemon\BattleGame$Colors.class
+Codemon\PKMList$Colors.class
 Codemon\PKMList.class
+Codemon\MainMenu$Colors.class
 Codemon\TypeEffectiveness.class
 Codemon\PKM.class
 Codemon\PokeAPI.class

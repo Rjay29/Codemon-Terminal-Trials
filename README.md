@@ -173,18 +173,58 @@ Each class has one clear purpose.
 └──────────────────────────────────────────┘
 ```
 
-### Key Classes
+### Key Classes (10 Files)
 
-| Class | Lines | Purpose |
-|-------|-------|---------|
-| `MainMenu.java` | 110 | Entry point; console UI; Pokémon creation |
-| `BattleGame.java` | 120 | Battle loop; turn resolution; damage calc |
-| `PKM.java` | 25 | Pokémon data model with stats & moves |
-| `Move.java` | 20 | Immutable move data model |
-| `TypeEffectiveness.java` | 45 | Type cache & API fetching |
-| `PKMList.java` | 30 | Display first 151 Pokémon |
-| `Colors.java` | 11 | ANSI color constants |
-| `PokeAPI.java` | 35 | Debug utility |
+| Class | Purpose |
+|-------|---------|
+| `MainMenu.java` | Entry point; colorized menu; Colors inner class |
+| `BattleGame.java` | Battle engine; difficulty modes; turn order; Colors inner class; pause() utility |
+| `PKM.java` | Base/concrete Pokémon model |
+| `Species.java` | Concrete Pokémon with level, HP, maxHp, attack, defense, moves |
+| `Move.java` | Immutable move data (name, type, power, accuracy, damageClass) |
+| `Factory.java` | Creates Species from PokéAPI (1-151) |
+| `TypeEffectiveness.java` | Type matchup caching & lazy loading |
+| `PKMList.java` | Fetch & display first 151 Pokémon with pause prompt |
+| `Colors.java` | ANSI color constants (standalone utility or inner class) |
+| `PokeAPI.java` | Debug tool for dumping Pokémon data |
+
+---
+
+## Gameplay Mechanics
+
+### Battle System
+- **Difficulty Modes**: Easy (opponent half-level) vs Hard (opponent same/higher level)
+- **Turn Order**: Determined by Pokémon level + RNG (higher level → goes first)
+- **Move Selection**: Player selects from 2-4 available moves per Pokémon
+- **Automatic Resolution**: Opponent selects random move, simultaneous damage calculation
+
+### Damage Formula
+```
+Base Damage = (Level × 0.2 + 1) × Power × (Attack / Defense) × Effectiveness × STAB × Variance × Crit
+
+Where:
+- Effectiveness: 2.0 (super effective), 1.0 (neutral), 0.5 (not very effective), 0.0 (immune)
+- STAB: 1.5× if move type matches Pokémon type
+- Variance: 0.85–1.0 random multiplier
+- Crit: 1.5× on critical hit (6.25% chance)
+```
+
+### Experience & Leveling
+- **XP Gain**: 10–30 XP per battle (varies by opponent level)
+- **Level Up Threshold**: 100 XP per level
+- **Max Level**: Level 99 (arbitrary limit)
+- **HP Growth**: `hp_at_level = base_hp + (level - 1) × 2`
+
+### Type Effectiveness System
+- **Cached Lookups**: First call fetches from PokéAPI; subsequent calls use in-memory cache
+- **Type Matchups**: Supports 18 Pokémon types (normal, fire, water, electric, grass, ice, fighting, poison, ground, flying, psychic, bug, rock, ghost, dragon, dark, steel, fairy)
+- **Fallback**: Returns 1.0 (neutral) if API unavailable
+
+### User Interface
+- **Colorized Menus**: ANSI colors (red, green, yellow, blue, purple, cyan)
+- **HP Bars**: Visual 20-character gauge showing remaining HP
+- **Pause Prompts**: "Press Enter to continue..." after battles, running away, and viewing Pokémon list
+- **Battle Feedback**: Effectiveness messages, damage numbers, XP/level notifications
 
 ---
 
@@ -210,11 +250,18 @@ mvn clean compile
 ```bash
 mvn exec:java -Dexec.mainClass=Codemon.MainMenu
 ```
+The game features **colorful ANSI terminal UI** with color-coded menus and battle output.
 
 ### Step 4 (Optional): Run Debug Tool
 Fetch and display all 151 Pokémon stats:
 ```bash
 mvn exec:java -Dexec.mainClass=Codemon.PokeAPI
+```
+
+### Step 5 (Optional): View Pokémon List
+View and browse the first 151 Pokémon:
+```bash
+mvn exec:java -Dexec.mainClass=Codemon.PKMList
 ```
 
 ---
@@ -254,33 +301,73 @@ Enter Defense (30-150): 80
 Enter type: water
 ```
 
-### Battle In Progress
+### Sample Output
+
+#### Main Menu (Colorful Terminal)
 ```
-=== Battle Start ===
-Player: Pikachu (HP: 100) | Opponent: Squirtle (HP: 100)
+--- Terminal Pokémon Battle ---
+1. Battle
+2. Pokémon List
+3. Credits
+4. End Game
 
---- Turn 1 ---
-Player: [██████████░░░░░░░░] 100 | Opponent: [██████████░░░░░░░░] 100
+Choose: 1
+```
 
-Player's turn:
-1. Tackle
-2. Ember
-Choose move (1-2): 2
+#### Difficulty Selection
+```
+Choose difficulty:
+1. Easy
+2. Hard
+1 or 2?: 1
 
-Player used Ember!
-Super effective!
-Damage dealt: 42
+Opponent: Charizard (Type: fire)
+Choose your Pokémon ID (1-151): 25
+```
 
-Opponent's turn:
-Opponent used Surf!
-Super effective!
-Damage taken: 58
+#### Battle in Progress (Colorful with HP Bars)
+```
+⚔️ Battle Start! ⚔️
+Go! Pikachu!
 
---- Turn 2 ---
-Player: [████████░░░░░░░░░░] 42 | Opponent: [████████░░░░░░░░░░] 58
+=== Battle Menu ===
+Pikachu HP: [####################]   Charizard HP: [####################]
+1. Fight
+2. Run
+
+Choose: 1
+
+Your Moves:
+1. Thunder Punch (electric, 75)
+2. Quick Attack (normal, 40)
+
+Choose a move: 1
+
+Pikachu used Thunder Punch! A critical hit! It's super effective! Dealt 65 damage.
+Charizard used Flame Burst! Not very effective... Dealt 22 damage.
+
+=== Battle Menu ===
+Pikachu HP: [####################]   Charizard HP: [#################---]
 ...
+```
 
-=== You won! ===
+#### Victory Screen
+```
+*** Victory! ***
+Pikachu gained 18 XP!
+Pikachu leveled up to Lv 8!
+
+Press Enter to continue...
+```
+
+#### Pokémon List
+```
+=== First 151 Codémon ===
+1. bulbasaur
+2. ivysaur
+3. venusaur
+... (151 total)
+
 Press Enter to continue...
 ```
 
