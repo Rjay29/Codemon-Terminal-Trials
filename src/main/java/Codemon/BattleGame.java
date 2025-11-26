@@ -58,7 +58,7 @@ public class BattleGame {
 
             if (choice == 2) {
                 System.out.println(Colors.YELLOW + "You ran away safely..." + Colors.RESET);
-                pause(scanner);
+                pause();
                 return;
             } else if (choice != 1) {
                 System.out.println(Colors.PURPLE + "Invalid choice! Try again." + Colors.RESET);
@@ -83,17 +83,10 @@ public class BattleGame {
 
         if (player.getHp() > 0) {
             System.out.println(Colors.GREEN + "\n*** Victory! ***" + Colors.RESET);
-            int xpGain = 10 + new Random().nextInt(20);
-            int newLevel = player.getLevel() + xpGain / 10;
-            System.out.println(player.getName() + " gained " + xpGain + " XP!");
-            if (newLevel > player.getLevel()) {
-                System.out.println(Colors.CYAN + player.getName() + " leveled up to Lv " + newLevel + "!" + Colors.RESET);
-                player.setLevel(newLevel);
-            }
         } else {
             System.out.println(Colors.RED + "\n*** You blacked out... ***" + Colors.RESET);
         }
-        pause(scanner);
+        pause();
     }
 
     private static boolean playerTurn(Scanner scanner, Species player, Species opponent) {
@@ -173,9 +166,13 @@ public class BattleGame {
         return bar.toString();
     }
 
-    private static void pause(Scanner scanner) {
-        System.out.print(Colors.BLUE + "\nPress Enter to continue..." + Colors.RESET);
-        scanner.nextLine();
+    private static void pause() {
+        System.out.println(Colors.PURPLE + "\nPress Enter to continue..." + Colors.RESET);
+        try {
+            System.in.read();
+        } catch (Exception e) {
+            // Ignore
+        }
     }
 
     private static Species boostOpponent(Species original) {
