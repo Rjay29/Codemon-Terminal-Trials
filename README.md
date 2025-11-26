@@ -36,12 +36,13 @@ The project demonstrates core Object-Oriented Programming concepts while providi
 |--------------|-------------|
 | `MainMenu.java` | Entry point; displays the main menu (Battle, Load, Pokémon List, Credits, Exit). |
 | `BattleGame.java` | Handles turn order, damage formulas, XP system, and difficulty. |
-| `Pokemon.java` | Abstract class defining base Pokémon attributes. |
-| `PokemonSpecies.java` | Subclass representing API-loaded Pokémon species. |
+| `PKM.java` | Abstract class defining base Pokémon attributes. |
+| `Species.java` | Subclass representing API-loaded Pokémon species. |
 | `Move.java` | Stores move power, accuracy, and type. |
 | `MoveFactory.java` | Retrieves Pokémon move data from PokéAPI. |
 | `TypeEffectiveness.java` | Calculates type matchup multipliers. |
-| `PokedexUI.java` | Displays names of the first 151 Pokémon. |
+| `PKMList.java` | Pokédex Viewer | Displays all 151 Pokémon with pause prompt |
+| `PokeAPI.java` | Debug Tool | Exports detailed stats for all Pokémon |
 
 ---
 
