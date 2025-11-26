@@ -50,7 +50,7 @@ The project demonstrates core Object-Oriented Programming concepts while providi
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                      MainMenu (Entry)                   │
+│                  MainMenu (Entry)                       │
 │  - main(): Console menu & Pokémon creation              │
 │  - startBattle(): Initiate BattleGame                   │
 └────────────────────────┬────────────────────────────────┘
@@ -81,7 +81,7 @@ The project demonstrates core Object-Oriented Programming concepts while providi
     └──────────┘
 
 ┌──────────────────────────────────────────┐
-│         Utility Classes                  │
+│           Utility Classes                │
 ├──────────────────────────────────────────┤
 │ Colors       → ANSI color constants      │
 │ PKMList      → Fetch & display Pokémon   │
