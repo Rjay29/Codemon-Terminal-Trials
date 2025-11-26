@@ -50,7 +50,7 @@ The project demonstrates core Object-Oriented Programming concepts while providi
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                      MainMenu (Entry)                    │
+│                  MainMenu (Entry)                       │
 │  - main(): Console menu & Pokémon creation              │
 │  - startBattle(): Initiate BattleGame                   │
 └────────────────────────┬────────────────────────────────┘
@@ -75,13 +75,13 @@ The project demonstrates core Object-Oriented Programming concepts while providi
          ↓
     ┌──────────┐
     │   Move   │
-    │ (name,   │
-    │  type,   │
-    │  power)  │
+    │  (name,  │
+    │   type,  │
+    │   power) │
     └──────────┘
 
 ┌──────────────────────────────────────────┐
-│         Utility Classes                   │
+│              Utility Classes             │
 ├──────────────────────────────────────────┤
 │ Colors       → ANSI color constants      │
 │ PKMList      → Fetch & display Pokémon   │
@@ -249,7 +249,3 @@ Created by:
 - [Effective Java (3rd Edition)](https://www.oreilly.com/library/view/effective-java/9780134685991/) - Design patterns & best practices
 
 ---
-
-**Build Status**: ✅ SUCCESS (9 source files)  
-**Last Updated**: November 25, 2025  
-**Version**: 1.0 (Finalized)
